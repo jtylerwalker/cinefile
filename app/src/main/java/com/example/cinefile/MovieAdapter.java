@@ -59,6 +59,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
             textTitle = itemView.findViewById(R.id.main_title);
             textRating = itemView.findViewById(R.id.main_rating);
             textYear = itemView.findViewById(R.id.main_year);
+
             this.mOnClickListener = onListener;
             itemView.setOnClickListener(this);
         }

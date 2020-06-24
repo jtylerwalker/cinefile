@@ -1,13 +1,18 @@
 package com.example.cinefile;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.core.view.MenuItemCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -23,35 +28,65 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements RecyclerViewClickListener {
+public class SearchActivity extends AppCompatActivity implements RecyclerViewClickListener {
     private RecyclerView mList;
-    private GridLayoutManager gridLayoutManager;
+    private LinearLayoutManager linearLayoutManager;
     private List<Movie> movieList;
     private RecyclerView.Adapter adapter;
     private String apiKey = BuildConfig.API_KEY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        mList = findViewById(R.id.mainList);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_search);
+
+        populateMovieList();
+    }
+
+    protected void populateMovieList() {
+        mList = findViewById(R.id.searchList);
 
         movieList = new ArrayList<>();
-        adapter = new MovieAdapter(getApplicationContext(), movieList, this);
+        adapter = new SearchAdapter(getApplicationContext(), movieList, this);
 
-        gridLayoutManager = new GridLayoutManager(this, 3);
-        gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
+        linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         mList.setHasFixedSize(true);
-        mList.setLayoutManager(gridLayoutManager);
+        mList.setLayoutManager(linearLayoutManager);
         mList.setAdapter(adapter);
     }
 
-    public void fetchMovies(View view) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.toolbar_menu, menu);
+        MenuItem searchViewItem = menu.findItem(R.id.app_bar_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchViewItem);
+        searchView.setOnQueryTextListener(
+                new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String s) {
+                        Log.d("Search", s);
+                        searchMovies(s);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String s) {
+                        return false;
+                    }
+                }
+        );
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    public void searchMovies(String query) {
+        movieList.clear();
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="https://api.themoviedb.org/3/movie/popular?language=en-US&page=1&api_key=" + apiKey;
+        String url = "https://api.themoviedb.org/3/search/movie?language=en-US&page=1&api_key=" + apiKey + "&query=" + query;
 
         // Request a string response from the provided URL.
         JsonObjectRequest obreq = new JsonObjectRequest(Request.Method.GET, url, null,
