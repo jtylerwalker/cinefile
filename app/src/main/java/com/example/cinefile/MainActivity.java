@@ -2,12 +2,15 @@ package com.example.cinefile;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -23,10 +26,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RecyclerViewClickListener {
     private RecyclerView mList;
-
-    private LinearLayoutManager linearLayoutManager;
+    private GridLayoutManager gridLayoutManager;
     private DividerItemDecoration dividerItemDecoration;
     private List<Movie> movieList;
     private RecyclerView.Adapter adapter;
@@ -40,26 +42,23 @@ public class MainActivity extends AppCompatActivity {
         mList = findViewById(R.id.mainList);
 
         movieList = new ArrayList<>();
-        adapter = new MovieAdapter(getApplicationContext(),movieList);
+        adapter = new MovieAdapter(getApplicationContext(), movieList, this);
 
-        linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        dividerItemDecoration = new DividerItemDecoration(mList.getContext(), linearLayoutManager.getOrientation());
+        gridLayoutManager = new GridLayoutManager(this, 3);
+        gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
 
         mList.setHasFixedSize(true);
-        mList.setLayoutManager(linearLayoutManager);
-        mList.addItemDecoration(dividerItemDecoration);
+        mList.setLayoutManager(gridLayoutManager);
         mList.setAdapter(adapter);
-//        textView = (TextView) findViewById(R.id.textView);
     }
 
     public void fetchMovies(View view) {
-// Instantiate the RequestQueue.
+        // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
         String url ="https://api.themoviedb.org/3/movie/popular?language=en-US&page=1&api_key=" + apiKey;
 
 
-// Request a string response from the provided URL.
+        // Request a string response from the provided URL.
         JsonObjectRequest obreq = new JsonObjectRequest(Request.Method.GET, url, null,
                 // The third parameter Listener overrides the method onResponse() and passes
                 //JSONObject as a parameter
@@ -77,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 Movie movie = new Movie();
                                 movie.setTitle(jsonObject.getString("title"));
-                                movie.setRating(jsonObject.getInt("vote_average"));
+                                movie.setRating(jsonObject.getDouble("vote_average"));
                                 movie.setYear(jsonObject.getString("release_date"));
                                 movie.setPosterUrl(jsonObject.getString("poster_path"));
 
@@ -102,5 +101,13 @@ public class MainActivity extends AppCompatActivity {
         // Adds the JSON object request "obreq" to the request queue
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(obreq);
+    }
+
+    @Override
+    public void onClick(View view, int position) {
+        Log.d("Clicked:", movieList.get(position).title);
+        Intent intent = new Intent(this, MovieDetailActivity.class);
+        intent.putExtra("Movie", movieList.get(position));
+        startActivity(intent);
     }
 }

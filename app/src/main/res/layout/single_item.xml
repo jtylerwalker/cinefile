@@ -11,8 +11,7 @@
     <ImageView
         android:id="@+id/poster_image"
         android:layout_width="match_parent"
-        android:layout_height="254dp"
-        android:background="#BDB0B0"
+        android:layout_height="120dp"
         android:contentDescription="image"
         android:visibility="visible"
         tools:srcCompat="@color/colorAccent" />

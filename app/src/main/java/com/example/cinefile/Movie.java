@@ -1,9 +1,11 @@
 package com.example.cinefile;
 
-public class Movie {
+import java.io.Serializable;
+
+public class Movie implements Serializable {
 
     public String title;
-    public int rating;
+    public double rating;
     public String year;
     public String posterUrl;
 
@@ -11,7 +13,7 @@ public class Movie {
 
     }
 
-    public Movie(String title, int rating, String year) {
+    public Movie(String title, double rating, String year) {
         this.title = title;
         this.rating = rating;
         this.year = year;
@@ -25,11 +27,11 @@ public class Movie {
         this.title = title;
     }
 
-    public int getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(double rating) {
         this.rating = rating;
     }
 
