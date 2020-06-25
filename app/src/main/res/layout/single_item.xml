@@ -21,14 +21,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Title"
-        android:textSize="18sp"/>
+        android:textColor="@color/colorText"
+        android:textSize="18sp" />
 
 
     <TextView
         android:id="@+id/main_rating"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Rating"/>
+        android:text="Rating"
+        android:textColor="@color/colorText" />
 
     <TextView
         android:id="@+id/main_year"
