@@ -3,20 +3,33 @@ package com.example.cinefile;
 import java.io.Serializable;
 
 public class Movie implements Serializable {
-
+    public int id;
     public String title;
-    public double rating;
+    public double voteAverage;
     public String year;
     public String posterUrl;
+    public String overview;
 
     public Movie() {
 
     }
 
-    public Movie(String title, double rating, String year) {
+    public Movie(int id, String title, double voteAverage, String year, String posterUrl, String overview) {
+        this.id = id;
         this.title = title;
-        this.rating = rating;
+        this.voteAverage = voteAverage;
         this.year = year;
+        this.posterUrl = posterUrl;
+        this.overview = overview;
+    }
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -27,12 +40,12 @@ public class Movie implements Serializable {
         this.title = title;
     }
 
-    public double getRating() {
-        return rating;
+    public double getVoteAverage() {
+        return voteAverage;
     }
 
-    public void setRating(double rating) {
-        this.rating = rating;
+    public void setVoteAverage(double voteAverage) {
+        this.voteAverage = voteAverage;
     }
 
     public String getYear() {
@@ -49,5 +62,13 @@ public class Movie implements Serializable {
 
     public void setPosterUrl(String posterUrl) {
         this.posterUrl = posterUrl;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
     }
 }

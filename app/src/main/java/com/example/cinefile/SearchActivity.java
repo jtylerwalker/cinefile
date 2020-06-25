@@ -106,7 +106,7 @@ public class SearchActivity extends AppCompatActivity implements RecyclerViewCli
 
                                 Movie movie = new Movie();
                                 movie.setTitle(jsonObject.getString("title"));
-                                movie.setRating(jsonObject.getDouble("vote_average"));
+                                movie.setVoteAverage(jsonObject.getDouble("vote_average"));
                                 movie.setYear(jsonObject.getString("release_date"));
                                 movie.setPosterUrl(jsonObject.getString("poster_path"));
 
@@ -134,10 +134,10 @@ public class SearchActivity extends AppCompatActivity implements RecyclerViewCli
     }
 
     @Override
-    public void onClick(View view, int position) {
+    public void onClick(View view, int position, List<Movie> list) {
         Log.d("Clicked:", movieList.get(position).title);
         Intent intent = new Intent(this, MovieDetailActivity.class);
-        intent.putExtra("Movie", movieList.get(position));
+        intent.putExtra("Movie", list.get(position));
         startActivity(intent);
     }
 }

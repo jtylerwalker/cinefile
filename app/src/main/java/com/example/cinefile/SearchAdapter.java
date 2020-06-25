@@ -51,7 +51,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
         @Override
         public void onClick(View view) {
-            mOnClickListener.onClick(view, getAdapterPosition());
+            mOnClickListener.onClick(view, getAdapterPosition(), list);
         }
 
     }

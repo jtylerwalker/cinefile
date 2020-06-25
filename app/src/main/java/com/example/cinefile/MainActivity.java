@@ -2,10 +2,9 @@ package com.example.cinefile;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,10 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements RecyclerViewClickListener {
-    private RecyclerView mList;
-    private GridLayoutManager gridLayoutManager;
-    private List<Movie> movieList;
-    private RecyclerView.Adapter adapter;
+    private RecyclerView popularListRecycler, topRatedListRecycler, upcomingListRecycler;
+    private List<Movie> popularList, topRatedList, upcomingList;
+    private RecyclerView.Adapter popularAdapter, topRatedAdapter, upcomingAdapter;
     private String apiKey = BuildConfig.API_KEY;
 
     @Override
@@ -37,23 +35,49 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mList = findViewById(R.id.mainList);
+        popularListRecycler = findViewById(R.id.popularList);
+        topRatedListRecycler = findViewById(R.id.topRatedList);
+        upcomingListRecycler = findViewById(R.id.upcomingList);
 
-        movieList = new ArrayList<>();
-        adapter = new MovieAdapter(getApplicationContext(), movieList, this);
+        popularList = new ArrayList<>();
+        topRatedList = new ArrayList<>();
+        upcomingList = new ArrayList<>();
 
-        gridLayoutManager = new GridLayoutManager(this, 3);
-        gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
+        popularAdapter = new MovieAdapter(getApplicationContext(), popularList, this);
+        topRatedAdapter = new MovieAdapter(getApplicationContext(), topRatedList, this);
+        upcomingAdapter = new MovieAdapter(getApplicationContext(), upcomingList, this);
 
-        mList.setHasFixedSize(true);
-        mList.setLayoutManager(gridLayoutManager);
-        mList.setAdapter(adapter);
+        LinearLayoutManager layoutManager
+                = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager topRatedManager
+                = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager upcomingManager
+                = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+
+        popularListRecycler.setHasFixedSize(true);
+        popularListRecycler.setLayoutManager(layoutManager);
+        popularListRecycler.setAdapter(popularAdapter);
+
+        topRatedListRecycler.setHasFixedSize(true);
+        topRatedListRecycler.setLayoutManager(topRatedManager);
+        topRatedListRecycler.setAdapter(topRatedAdapter);
+
+        upcomingListRecycler.setHasFixedSize(true);
+        upcomingListRecycler.setLayoutManager(upcomingManager);
+        upcomingListRecycler.setAdapter(upcomingAdapter);
+
+        String popularUrl = "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1&api_key=" + apiKey;
+        String topRatedUrl = "https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1&api_key=" + apiKey;
+        String upcomingUrl = "https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1&api_key=" + apiKey;
+
+        fetchMovies(popularUrl, popularList, popularAdapter);
+        fetchMovies(topRatedUrl, topRatedList, topRatedAdapter);
+        fetchMovies(upcomingUrl, upcomingList, upcomingAdapter);
     }
 
-    public void fetchMovies(View view) {
+    public void fetchMovies(String url, final List<Movie> list, final RecyclerView.Adapter adapter) {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="https://api.themoviedb.org/3/movie/popular?language=en-US&page=1&api_key=" + apiKey;
 
         // Request a string response from the provided URL.
         JsonObjectRequest obreq = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -72,17 +96,20 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewClick
                                 Log.println(Log.WARN,"Volley", jsonObject.getString("poster_path"));
 
                                 Movie movie = new Movie();
+                                movie.setId(jsonObject.getInt("id"));
                                 movie.setTitle(jsonObject.getString("title"));
-                                movie.setRating(jsonObject.getDouble("vote_average"));
+                                movie.setVoteAverage(jsonObject.getDouble("vote_average"));
                                 movie.setYear(jsonObject.getString("release_date"));
+                                movie.setOverview(jsonObject.getString("overview"));
                                 movie.setPosterUrl(jsonObject.getString("poster_path"));
 
-                                movieList.add(movie);
+                                list.add(movie);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                         adapter.notifyDataSetChanged();
+Log.d("List", popularList.get(0).title);
                     }
                 },
                 // The final parameter overrides the method onErrorResponse() and passes VolleyError
@@ -101,10 +128,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewClick
     }
 
     @Override
-    public void onClick(View view, int position) {
-        Log.d("Clicked:", movieList.get(position).title);
+    public void onClick(View view, int position, List<Movie> list) {
         Intent intent = new Intent(this, MovieDetailActivity.class);
-        intent.putExtra("Movie", movieList.get(position));
+        intent.putExtra("Movie", list.get(position));
         startActivity(intent);
     }
 }
