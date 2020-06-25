@@ -1,6 +1,9 @@
 package com.example.cinefile;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -8,7 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -16,6 +22,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.navigation.NavigationView;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,10 +38,21 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewClick
     private RecyclerView.Adapter popularAdapter, topRatedAdapter, upcomingAdapter;
     private String apiKey = BuildConfig.API_KEY;
 
+    // nav
+    private DrawerLayout dl;
+    private ActionBarDrawerToggle t;
+    private NavigationView nv;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ImageView background = findViewById(R.id.backgroundImage);
+        Picasso.get()
+                .load("http://image.tmdb.org/t/p/w780/pCUdYAaarKqY2AAUtV6xXYO8UGY.jpg")
+                .into(background);
 
         popularListRecycler = findViewById(R.id.popularList);
         topRatedListRecycler = findViewById(R.id.topRatedList);
@@ -73,6 +92,52 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewClick
         fetchMovies(popularUrl, popularList, popularAdapter);
         fetchMovies(topRatedUrl, topRatedList, topRatedAdapter);
         fetchMovies(upcomingUrl, upcomingList, upcomingAdapter);
+
+        createNav();
+    }
+
+    public void createNav() {
+        final Intent intent = new Intent(this, SearchActivity.class);
+
+        dl = (DrawerLayout)findViewById(R.id.drawer_main);
+        t = new ActionBarDrawerToggle(this, dl, R.string.navigation_open, R.string.navigation_close);
+
+        dl.addDrawerListener(t);
+        t.syncState();
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        nv = (NavigationView)findViewById(R.id.navView);
+        nv.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                switch(id)
+                {
+                    case R.id.home:
+                        Toast.makeText(MainActivity.this, "My Account",Toast.LENGTH_SHORT).show();break;
+                    case R.id.search:
+                        startActivity(intent);
+                    case R.id.featured:
+                        Toast.makeText(MainActivity.this, "My Cart",Toast.LENGTH_SHORT).show();break;
+                    default:
+                        return true;
+                }
+
+
+                return true;
+
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if(t.onOptionsItemSelected(item))
+            return true;
+
+        return super.onOptionsItemSelected(item);
     }
 
     public void fetchMovies(String url, final List<Movie> list, final RecyclerView.Adapter adapter) {

@@ -2,6 +2,7 @@ package com.example.cinefile;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.MenuItemCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -52,6 +53,10 @@ public class SearchActivity extends AppCompatActivity implements RecyclerViewCli
 
         linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mList.getContext(),
+                linearLayoutManager.getOrientation());
+        mList.addItemDecoration(dividerItemDecoration);
 
         mList.setHasFixedSize(true);
         mList.setLayoutManager(linearLayoutManager);
@@ -105,9 +110,11 @@ public class SearchActivity extends AppCompatActivity implements RecyclerViewCli
                                 Log.println(Log.WARN,"Volley", jsonObject.getString("poster_path"));
 
                                 Movie movie = new Movie();
+                                movie.setId(jsonObject.getInt("id"));
                                 movie.setTitle(jsonObject.getString("title"));
                                 movie.setVoteAverage(jsonObject.getDouble("vote_average"));
                                 movie.setYear(jsonObject.getString("release_date"));
+                                movie.setOverview(jsonObject.getString("overview"));
                                 movie.setPosterUrl(jsonObject.getString("poster_path"));
 
                                 movieList.add(movie);

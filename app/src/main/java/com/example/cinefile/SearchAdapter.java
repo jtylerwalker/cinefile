@@ -1,12 +1,16 @@
 package com.example.cinefile;
 
 import android.content.Context;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -30,6 +34,9 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Movie item = list.get(position);
+        Picasso.get()
+                .load("http://image.tmdb.org/t/p/w342" + item.getPosterUrl())
+                .into(holder.searchImage);
         holder.textTitle.setText(item.title);
     }
 
@@ -38,11 +45,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView textTitle;
+        private ImageView searchImage;
         private RecyclerViewClickListener mOnClickListener;
 
         public ViewHolder(View itemView, RecyclerViewClickListener mOnClickListener) {
             super(itemView);
 
+            searchImage = itemView.findViewById(R.id.searchImage);
             textTitle = itemView.findViewById(R.id.main_title);
 
             this.mOnClickListener = mOnClickListener;

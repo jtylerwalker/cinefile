@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">cinefile</string>
+    <string name="navigation_open">Open</string>
+    <string name="navigation_close">Open</string>
 </resources>
