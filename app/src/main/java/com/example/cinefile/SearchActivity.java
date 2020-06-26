@@ -73,7 +73,6 @@ public class SearchActivity extends AppCompatActivity implements RecyclerViewCli
                 new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String s) {
-                        Log.d("Search", s);
                         searchMovies(s);
                         return false;
                     }
@@ -107,17 +106,18 @@ public class SearchActivity extends AppCompatActivity implements RecyclerViewCli
 
                             for (int i = 0; i < results.length(); i++) {
                                 JSONObject jsonObject = results.getJSONObject(i);
-                                Log.println(Log.WARN,"Volley", jsonObject.getString("poster_path"));
 
-                                Movie movie = new Movie();
-                                movie.setId(jsonObject.getInt("id"));
-                                movie.setTitle(jsonObject.getString("title"));
-                                movie.setVoteAverage(jsonObject.getDouble("vote_average"));
-                                movie.setYear(jsonObject.getString("release_date"));
-                                movie.setOverview(jsonObject.getString("overview"));
-                                movie.setPosterUrl(jsonObject.getString("poster_path"));
+                                if (jsonObject.getString("poster_path") != "null") {
+                                    Movie movie = new Movie();
+                                    movie.setId(jsonObject.getInt("id"));
+                                    movie.setTitle(jsonObject.getString("title"));
+                                    movie.setVoteAverage(jsonObject.getDouble("vote_average"));
+                                    movie.setYear(jsonObject.getString("release_date"));
+                                    movie.setOverview(jsonObject.getString("overview"));
+                                    movie.setPosterUrl(jsonObject.getString("poster_path"));
 
-                                movieList.add(movie);
+                                    movieList.add(movie);
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -142,7 +142,6 @@ public class SearchActivity extends AppCompatActivity implements RecyclerViewCli
 
     @Override
     public void onClick(View view, int position, List<Movie> list) {
-        Log.d("Clicked:", movieList.get(position).title);
         Intent intent = new Intent(this, MovieDetailActivity.class);
         intent.putExtra("Movie", list.get(position));
         startActivity(intent);

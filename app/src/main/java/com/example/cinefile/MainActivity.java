@@ -115,11 +115,14 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewClick
                 switch(id)
                 {
                     case R.id.home:
-                        Toast.makeText(MainActivity.this, "My Account",Toast.LENGTH_SHORT).show();break;
+                        //Toast.makeText(MainActivity.this, "My Account",Toast.LENGTH_SHORT).show();break;
+                        break;
                     case R.id.search:
                         startActivity(intent);
+                        break;
                     case R.id.featured:
-                        Toast.makeText(MainActivity.this, "My Cart",Toast.LENGTH_SHORT).show();break;
+                        //Toast.makeText(MainActivity.this, "My Cart",Toast.LENGTH_SHORT).show();break;
+                        break;
                     default:
                         return true;
                 }
@@ -158,23 +161,23 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewClick
 
                             for (int i = 0; i < results.length(); i++) {
                                 JSONObject jsonObject = results.getJSONObject(i);
-                                Log.println(Log.WARN,"Volley", jsonObject.getString("poster_path"));
 
-                                Movie movie = new Movie();
-                                movie.setId(jsonObject.getInt("id"));
-                                movie.setTitle(jsonObject.getString("title"));
-                                movie.setVoteAverage(jsonObject.getDouble("vote_average"));
-                                movie.setYear(jsonObject.getString("release_date"));
-                                movie.setOverview(jsonObject.getString("overview"));
-                                movie.setPosterUrl(jsonObject.getString("poster_path"));
+                                if (jsonObject.getString("poster_path") != "null") {
+                                    Movie movie = new Movie();
+                                    movie.setId(jsonObject.getInt("id"));
+                                    movie.setTitle(jsonObject.getString("title"));
+                                    movie.setVoteAverage(jsonObject.getDouble("vote_average"));
+                                    movie.setYear(jsonObject.getString("release_date"));
+                                    movie.setOverview(jsonObject.getString("overview"));
+                                    movie.setPosterUrl(jsonObject.getString("poster_path"));
 
-                                list.add(movie);
+                                    list.add(movie);
+                                };
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                         adapter.notifyDataSetChanged();
-Log.d("List", popularList.get(0).title);
                     }
                 },
                 // The final parameter overrides the method onErrorResponse() and passes VolleyError
